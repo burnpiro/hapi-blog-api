@@ -1,0 +1,30 @@
+{
+  "name": "blog",
+  "version": "0.0.0",
+  "description": "HapiJS based API blog system",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "blog",
+    "hapi",
+    "hapijs",
+    "api",
+    "rest",
+    "node"
+  ],
+  "author": "Kemal Erdem",
+  "license": "GPLv3",
+  "dependencies": {
+    "hapi": "~8.4.0",
+    "mongoose": "~4.0.3",
+    "joi": "~6.4.2",
+    "boom": "~2.7.2"
+  },
+  "devDependencies": {
+    "gulp": "~3.8.11",
+    "gulp-util": "~3.0.4",
+    "gulp-nodemon": "~2.0.3"
+  }
+}

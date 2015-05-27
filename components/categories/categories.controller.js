@@ -1,0 +1,54 @@
+var Joi = require('joi');
+var Boom = require('boom');
+var Category = require('../categories/category.model');
+
+module.exports.getAll = {
+    handler: function(request, reply) {
+        Category.find({}, function(error, categories) {
+            if(!error) {
+                reply(categories);
+            } else {
+                reply(Boom.badImplementation(error));
+            }
+        });
+    }
+};
+
+module.exports.create = {
+    validate: {
+        payload: {
+            _id: Joi.string().required(),
+            parent: Joi.string(),
+            path: Joi.string().required(),
+            name: Joi.string().required()
+        }
+    },
+    handler: function(request, reply) {
+        var category = new Category(request.payload);
+        category.save(function(error, category) {
+            if(!error) {
+                reply(category).created('/categories/' + category._id);
+            } else {
+                if(11000 === error.code || 11001 === error.code) {
+                    reply(Boom.forbidden('category id already taken'));
+                } else {
+                    reply(Boom.forbidden(getErrorMessageFrom(error)));
+                }
+            }
+        });
+    }
+};
+
+module.exports.getOne = {
+    handler: function(request, reply) {
+        Category.findOne({
+            _id: request.params.categoryId
+        }, function(error, category) {
+            if(!error) {
+                reply(category);
+            } else {
+                reply(Boom.notFound('Cannot find category with that ID'));
+            }
+        });
+    }
+};
