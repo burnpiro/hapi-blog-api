@@ -1,4 +1,5 @@
 var Joi = require('joi');
+var _ = require('lodash');
 var Boom = require('boom');
 var Category = require('../categories/category.model');
 
@@ -6,6 +7,9 @@ module.exports.getAll = {
     handler: function(request, reply) {
         Category.find({}, function(error, categories) {
             if(!error) {
+                if(_.isNull(categories)) {
+                    reply(Boom.notFound('There is no categories added yet'));
+                }
                 reply(categories);
             } else {
                 reply(Boom.badImplementation(error));
@@ -45,10 +49,50 @@ module.exports.getOne = {
             _id: request.params.categoryId
         }, function(error, category) {
             if(!error) {
+                if(_.isNull(category)) {
+                    reply(Boom.notFound('Cannot find category with that ID'));
+                }
                 reply(category);
             } else {
                 reply(Boom.notFound('Cannot find category with that ID'));
             }
+        });
+    }
+};
+
+module.exports.update = {
+    validate: {
+        payload: {
+            parent: Joi.string(),
+            path: Joi.string().required(),
+            name: Joi.string().required()
+        }
+    },
+    handler: function(request, reply) {
+        Category.findOneAndUpdate({
+            _id: request.params.categoryId
+        }, request.payload, {overwrite: true}, function(error) {
+            if(error) {
+                reply(Boom.badImplementation('Cannot update category'));
+            }
+            reply({message: 'Category updated successfully'});
+        });
+    }
+};
+
+module.exports.remove = {
+    handler: function(request, reply) {
+        Category.findOne({
+            _id: request.params.categoryId
+        }, function(error, category) {
+            if(error) {
+                reply(Boom.badImplementation('Cannot remove category'));
+            }
+            if(_.isNull(category)) {
+                reply(Boom.notFound('Cannot find category with that ID'));
+            }
+            category.remove();
+            reply({message: 'Category removed successfully'})
         });
     }
 };

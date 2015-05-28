@@ -20,7 +20,8 @@
     "hapi": "~8.4.0",
     "mongoose": "~4.0.3",
     "joi": "~6.4.2",
-    "boom": "~2.7.2"
+    "boom": "~2.7.2",
+    "lodash": "~3.9.3"
   },
   "devDependencies": {
     "gulp": "~3.8.11",
