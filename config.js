@@ -1,6 +1,6 @@
 module.exports = {
     product: {
-        name: 'Blog'
+        name: 'Hapi Blog API'
     },
     server: {
         host: 'localhost',
@@ -12,15 +12,5 @@ module.exports = {
         db: 'blog',
         username: '',
         password: ''
-    },
-    login: {
-        twitter: {
-            clientId: '895kNxmdNi4od1hxWTuI9Z3XR',
-            clientSecret: 'k4FopsLqgjY2tG0jnnKYqFOqJJvGsGScm6121tv3O4drFydO9m'
-        },
-        facebook: {
-            clientId: '',
-            clientSecret: ''
-        }
     }
 };
