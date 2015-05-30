@@ -1,7 +1,7 @@
 {
   "name": "hapi-blog-api",
   "version": "0.0.0",
-  "description": "HapiJS based blog API bootepliar",
+  "description": "HapiJS based blog API Boilerplate",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
