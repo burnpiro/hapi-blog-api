@@ -1,6 +1,6 @@
 {
   "name": "hapi-blog-api",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "HapiJS based blog API Boilerplate",
   "main": "server.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "boilerplate"
   ],
   "author": "Kemal Erdem",
-  "license": "GPLv3",
+  "license": "MIT",
   "dependencies": {
     "hapi": "~8.4.0",
     "mongoose": "~4.0.3",
