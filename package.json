@@ -11,7 +11,8 @@
     "hapi",
     "hapijs",
     "api",
-    "node"
+    "node",
+    "boilerplate"
   ],
   "author": "Kemal Erdem",
   "license": "GPLv3",
