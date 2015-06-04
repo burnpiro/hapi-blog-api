@@ -14,14 +14,19 @@
     "node",
     "boilerplate"
   ],
-  "author": "Kemal Erdem",
+  "author": {
+    "name": "Kemal Erdem",
+    "email": "kemalpiro@gmail.com"
+  },
   "license": "MIT",
   "dependencies": {
     "hapi": "~8.4.0",
     "mongoose": "~4.0.3",
     "joi": "~6.4.2",
     "boom": "~2.7.2",
-    "lodash": "~3.9.3"
+    "lodash": "~3.9.3",
+    "moment": "~2.10.3",
+    "bcrypt": "~0.8.3"
   },
   "devDependencies": {
     "gulp": "~3.8.11",

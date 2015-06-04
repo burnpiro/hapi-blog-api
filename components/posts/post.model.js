@@ -1,5 +1,5 @@
-var Mongoose   = require('mongoose');
-var Schema     = Mongoose.Schema;
+var mongoose   = require('mongoose');
+var Schema     = mongoose.Schema;
 var Category   = require('../categories/category.model');
 
 var postSchema = new Schema({
@@ -8,6 +8,6 @@ var postSchema = new Schema({
     content       : { type: String }
 });
 
-var post = Mongoose.model('post', postSchema);
+var post = mongoose.model('post', postSchema);
 
 module.exports = exports = post;

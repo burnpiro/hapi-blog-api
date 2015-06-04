@@ -12,5 +12,12 @@ module.exports = {
         db: 'blog',
         username: '',
         password: ''
+    },
+    scopes: [
+        'admin',
+        'user'
+    ],
+    security: {
+        workFactor: 11
     }
 };

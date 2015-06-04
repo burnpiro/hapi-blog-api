@@ -1,7 +1,7 @@
 var Hapi = require('hapi');
 var routes = require('./routes');
 var config = require('./config');
-var Db = require('./database');
+var db = require('./database');
 
 var server = new Hapi.Server();
 
