@@ -19,5 +19,9 @@ module.exports = {
     ],
     security: {
         workFactor: 11
+    },
+    token: {
+        privateKey: 'BbZJjyoXAdr8BUZuiKKARWimKfrSmQ6fv8kZ7OFfc',
+        tokenExpire: 60 // 1 day
     }
 };

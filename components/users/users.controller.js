@@ -12,6 +12,10 @@ module.exports.create = {
             password: Joi.string().required()
         }
     },
+    auth: {
+        strategy: 'token',
+        scope: ['user']
+    },
     handler: function(request, reply) {
         request.payload.scope = 'user';
         var user = new User(request.payload);
@@ -30,6 +34,10 @@ module.exports.create = {
 };
 
 module.exports.getOne = {
+    auth: {
+        strategy: 'token',
+        scope: ['user']
+    },
     handler: function(request, reply) {
         User.findOne({
             userName: request.params.userName
@@ -42,6 +50,43 @@ module.exports.getOne = {
             } else {
                 reply(Boom.notFound('Cannot find user with that userName'));
             }
+        })
+    }
+};
+
+module.exports.login = {
+    validate: {
+        payload: {
+            userName: Joi.string().email().required(),
+            password: Joi.string().required()
+        }
+    },
+    auth: false,
+    handler: function(request, reply) {
+        User.findOne({
+            userName: request.payload.userName
+        }, function(error, user) {
+            if(error) {
+                Boom.notFound('User with that userName do not exists');
+            }
+
+            user.comparePasswords(request.payload.password, function(error, isMatch) {
+                if(error) {
+                    Boom.badImplementation('Unknown error has occurred');
+                }
+                if(isMatch) {
+                    var token = {
+                        userName: user.userName,
+                        id: user._id,
+                        scope: user.scope
+                    };
+                    reply({
+                        token: Jwt.sign(token, config.token.privateKey)
+                    });
+                } else {
+                    Boom.badRequest('Password is wrong');
+                }
+            })
         })
     }
 };

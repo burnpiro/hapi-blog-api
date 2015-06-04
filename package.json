@@ -25,6 +25,8 @@
     "joi": "~6.4.2",
     "boom": "~2.7.2",
     "lodash": "~3.9.3",
+    "hapi-auth-jwt": "~2.1.2",
+    "jsonwebtoken": "~5.0.1",
     "moment": "~2.10.3",
     "bcrypt": "~0.8.3"
   },
