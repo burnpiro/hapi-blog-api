@@ -13,7 +13,9 @@ gulp (useful)
 
 #### And follow instructions
 
-git clone https://github.com/burnpiro/hapi-blog-api.git
+First you need to clone repo
+
+    git clone https://github.com/burnpiro/hapi-blog-api.git
 
 inside ./hapi-blog-api folder run:
 
