@@ -20,7 +20,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "hapi": "~8.4.0",
+    "hapi": "~8.6.1",
     "mongoose": "~4.0.3",
     "joi": "~6.4.2",
     "boom": "~2.7.2",
