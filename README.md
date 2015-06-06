@@ -22,6 +22,10 @@ inside ./hapi-blog-api folder run:
 install npm packages
 
     npm install
+    
+If you want to create admin account please run (edit this file before and change credentials)
+
+    node install.js
 
 if you want do enable autorebuild please run
 
