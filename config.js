@@ -22,6 +22,6 @@ module.exports = {
     },
     token: {
         privateKey: 'BbZJjyoXAdr8BUZuiKKARWimKfrSmQ6fv8kZ7OFfc',
-        tokenExpire: 60 // 1 day
+        tokenExpire: 60*60*24 // 1 day
     }
 };

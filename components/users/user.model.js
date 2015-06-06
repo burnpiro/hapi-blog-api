@@ -1,7 +1,10 @@
 var mongoose   = require('mongoose');
 var config     = require('../../config');
 var bcrypt     = require('bcrypt');
+var moment     = require('moment');
+var _          = require('lodash');
 var Schema     = mongoose.Schema;
+var softDelete = require('mongoose-softdelete');
 
 var userSchema = new Schema({
     userName      : { type: String, unique: true, required: true, trim: true },
@@ -9,6 +12,8 @@ var userSchema = new Schema({
     scope         : { type: String, enum: config.scopes},
     createdAt     : { type: Date, default: Date.now }
 });
+
+userSchema.plugin(softDelete);
 
 userSchema.statics.findUser = function(userName, callback) {
     this.findOne({userName: userName}, callback);

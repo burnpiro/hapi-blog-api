@@ -28,7 +28,8 @@
     "hapi-auth-jwt": "~2.1.2",
     "jsonwebtoken": "~5.0.1",
     "moment": "~2.10.3",
-    "bcrypt": "~0.8.3"
+    "bcrypt": "~0.8.3",
+    "mongoose-softdelete": "~0.6.2"
   },
   "devDependencies": {
     "gulp": "~3.8.11",

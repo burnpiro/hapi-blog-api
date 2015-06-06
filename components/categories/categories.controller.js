@@ -4,6 +4,7 @@ var Boom = require('boom');
 var Category = require('../categories/category.model');
 
 module.exports.getAll = {
+    auth: false,
     handler: function(request, reply) {
         Category.find({}, function(error, categories) {
             if(!error) {
@@ -27,6 +28,10 @@ module.exports.create = {
             name: Joi.string().required()
         }
     },
+    auth: {
+        strategy: 'token',
+        scope: ['user']
+    },
     handler: function(request, reply) {
         var category = new Category(request.payload);
         category.save(function(error, category) {
@@ -44,6 +49,7 @@ module.exports.create = {
 };
 
 module.exports.getOne = {
+    auth: false,
     handler: function(request, reply) {
         Category.findOne({
             _id: request.params.categoryId
@@ -68,6 +74,10 @@ module.exports.update = {
             name: Joi.string().required()
         }
     },
+    auth: {
+        strategy: 'token',
+        scope: ['user']
+    },
     handler: function(request, reply) {
         Category.findOneAndUpdate({
             _id: request.params.categoryId
@@ -81,6 +91,10 @@ module.exports.update = {
 };
 
 module.exports.remove = {
+    auth: {
+        strategy: 'token',
+        scope: ['user']
+    },
     handler: function(request, reply) {
         Category.findOne({
             _id: request.params.categoryId

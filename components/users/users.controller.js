@@ -4,6 +4,7 @@ var config = require('../../config');
 var Jwt = require('jsonwebtoken');
 var User = require('./user.model');
 var _ = require('lodash');
+var moment = require('moment');
 
 module.exports.create = {
     validate: {
@@ -14,7 +15,7 @@ module.exports.create = {
     },
     auth: {
         strategy: 'token',
-        scope: ['user']
+        scope: ['admin']
     },
     handler: function(request, reply) {
         request.payload.scope = 'user';
@@ -40,7 +41,8 @@ module.exports.getOne = {
     },
     handler: function(request, reply) {
         User.findOne({
-            userName: request.params.userName
+            userName: request.params.userName,
+            deleted: {$ne: true}
         }, function(error, user) {
             if(!error) {
                 if(_.isNull(user)) {
@@ -64,15 +66,16 @@ module.exports.login = {
     auth: false,
     handler: function(request, reply) {
         User.findOne({
-            userName: request.payload.userName
+            userName: request.payload.userName,
+            deleted: {$ne: true}
         }, function(error, user) {
-            if(error) {
-                Boom.notFound('User with that userName do not exists');
+            if(error || _.isNull(user)) {
+                reply(Boom.notFound('User with that userName do not exists'));
             }
 
             user.comparePasswords(request.payload.password, function(error, isMatch) {
                 if(error) {
-                    Boom.badImplementation('Unknown error has occurred');
+                    reply(Boom.badImplementation('Unknown error has occurred'));
                 }
                 if(isMatch) {
                     var token = {
@@ -84,9 +87,75 @@ module.exports.login = {
                         token: Jwt.sign(token, config.token.privateKey)
                     });
                 } else {
-                    Boom.badRequest('Password is wrong');
+                    reply(Boom.badRequest('Password is wrong'));
                 }
             })
         })
+    }
+};
+
+module.exports.validateToken = function(decodedToken, callback) {
+    if(decodedToken.userName && decodedToken.iat){
+        if(moment().diff(moment(decodedToken.iat*1000), 'seconds') < config.token.tokenExpire) {
+            User.findOne({
+                userName: decodedToken.userName,
+                deleted: {$ne: true}
+            }, function(error, matched) {
+                if(!_.isNull(matched)) {
+                    return callback(error, true, {userName: matched.userName, scope: [matched.scope]});
+                } else {
+                    return callback(error, false, decodedToken);
+                }
+            });
+        } else {
+            return callback(Boom.badRequest('Token expired'), false, {})
+        }
+    } else {
+        return callback(Boom.badRequest('Invalid Token'), false, {})
+    }
+};
+
+module.exports.getAll = {
+    auth: {
+        strategy: 'token',
+        scope: ['user']
+    },
+    handler: function(request, reply) {
+        User.find({ deleted: {$ne: true} }, function(error, users) {
+            if(!error) {
+                if(_.isEmpty(users)) {
+                    reply(Boom.notFound('Cannot find user with that userName'));
+                }
+                reply(users);
+            } else {
+                reply(Boom.badImplementation('Unknown error has appears'));
+            }
+        })
+    }
+};
+
+module.exports.remove = {
+    auth: {
+        strategy: 'token',
+        scope: ['admin']
+    },
+    handler: function(request, reply) {
+        User.findOne({
+            userName: request.params.userName,
+            scope: {$ne: 'admin'}
+        }, function(error, user) {
+            if(error) {
+                reply(Boom.badImplementation('Cannot remove User'));
+            }
+            if(_.isNull(user)) {
+                reply(Boom.notFound('Cannot find user with that ID'));
+            }
+            user.softdelete(function(error, data) {
+                if(error) {
+                    reply(Boom.badImplementation('Cannot remove User'));
+                }
+                reply({code: 200, message: 'User removed successfully'})
+            });
+        });
     }
 };

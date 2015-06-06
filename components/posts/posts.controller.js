@@ -5,6 +5,7 @@ var Category = require('../categories/category.model');
 var Post = require('./post.model');
 
 module.exports.getAll = {
+    auth: false,
     handler: function(request, reply) {
         Post.find({}, function(error, posts) {
             if(!error) {
@@ -26,6 +27,10 @@ module.exports.create = {
             name: Joi.string().required(),
             content: Joi.string()
         }
+    },
+    auth: {
+        strategy: 'token',
+        scope: ['user']
     },
     handler: function(request, reply) {
         Category.findOne({
