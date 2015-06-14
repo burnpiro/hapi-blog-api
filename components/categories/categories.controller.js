@@ -11,7 +11,10 @@ module.exports.getAll = {
                 if(_.isNull(categories)) {
                     reply(Boom.notFound('There is no categories added yet'));
                 }
-                reply(categories);
+                reply({
+                    code: 200,
+                    data: categories
+                });
             } else {
                 reply(Boom.badImplementation(error));
             }
@@ -23,9 +26,10 @@ module.exports.create = {
     validate: {
         payload: {
             _id: Joi.string().required(),
-            parent: Joi.string(),
+            parent: Joi.any(),
             path: Joi.string().required(),
-            name: Joi.string().required()
+            name: Joi.string().required(),
+            type: Joi.string().required()
         }
     },
     auth: {
@@ -48,6 +52,33 @@ module.exports.create = {
     }
 };
 
+module.exports.search = {
+    validate: {
+        payload: {
+            _id: Joi.string(),
+            parent: Joi.any(),
+            path: Joi.string(),
+            name: Joi.string()
+        }
+    },
+    auth: false,
+    handler: function(request, reply) {
+        Category.find(request.payload, function(error, categories) {
+            if(!error) {
+                if(_.isNull(categories)) {
+                    reply(Boom.notFound('There is no categories added yet'));
+                }
+                reply({
+                    code: 200,
+                    data: categories
+                });
+            } else {
+                reply(Boom.badImplementation(error));
+            }
+        });
+    }
+};
+
 module.exports.getOne = {
     auth: false,
     handler: function(request, reply) {
@@ -58,7 +89,10 @@ module.exports.getOne = {
                 if(_.isNull(category)) {
                     reply(Boom.notFound('Cannot find category with that ID'));
                 }
-                reply(category);
+                reply({
+                    code: 200,
+                    data: category
+                });
             } else {
                 reply(Boom.notFound('Cannot find category with that ID'));
             }
@@ -69,9 +103,10 @@ module.exports.getOne = {
 module.exports.update = {
     validate: {
         payload: {
-            parent: Joi.string(),
+            parent: Joi.any(),
             path: Joi.string().required(),
-            name: Joi.string().required()
+            name: Joi.string().required(),
+            type: Joi.string().required()
         }
     },
     auth: {

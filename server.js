@@ -9,7 +9,15 @@ var _ = require('lodash');
 
 var server = new Hapi.Server();
 
-server.connection({port: config.server.port, host: config.server.host});
+server.connection(
+    {
+        port: config.server.port,
+        host: config.server.host,
+        routes: {
+            cors: true
+        }
+    }
+);
 
 server.register(require('hapi-auth-jwt'), function(error) {
 

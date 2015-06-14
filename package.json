@@ -20,20 +20,20 @@
   },
   "license": "MIT",
   "dependencies": {
-    "hapi": "~8.6.1",
-    "mongoose": "~4.0.3",
-    "joi": "~6.4.2",
-    "boom": "~2.7.2",
-    "lodash": "~3.9.3",
-    "hapi-auth-jwt": "~2.1.2",
-    "jsonwebtoken": "~5.0.1",
-    "moment": "~2.10.3",
-    "bcrypt": "~0.8.3",
-    "mongoose-softdelete": "~0.6.2"
+    "hapi": "~8.*",
+    "mongoose": "~4.*",
+    "joi": "~6.*",
+    "boom": "~2.*",
+    "lodash": "~3.*",
+    "hapi-auth-jwt": "~2.*",
+    "jsonwebtoken": "~5.*",
+    "moment": "~2.*",
+    "bcrypt": "~0.8.*",
+    "mongoose-softdelete": "~0.6.*"
   },
   "devDependencies": {
-    "gulp": "~3.8.11",
-    "gulp-util": "~3.0.4",
-    "gulp-nodemon": "~2.0.3"
+    "gulp": "~3.*",
+    "gulp-util": "~3.*",
+    "gulp-nodemon": "~2.*"
   }
 }

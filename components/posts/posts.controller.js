@@ -20,6 +20,32 @@ module.exports.getAll = {
     }
 };
 
+
+module.exports.search = {
+    validate: {
+        payload: {
+            _category: Joi.string().required()
+        }
+    },
+    auth: false,
+    handler: function(request, reply) {
+        Post.find(request.payload, function(error, posts) {
+            if(!error) {
+                if(_.isNull(posts)) {
+                    reply(Boom.notFound('There is no posts added yet'));
+                }
+                reply({
+                    code: 200,
+                    data: posts
+                });
+            } else {
+                reply(Boom.badImplementation(error));
+            }
+        });
+    }
+};
+
+
 module.exports.create = {
     validate: {
         payload: {
@@ -51,6 +77,28 @@ module.exports.create = {
                         }
                     }
                 });
+            }
+        });
+    }
+};
+
+
+module.exports.getOne = {
+    auth: false,
+    handler: function(request, reply) {
+        Post.findOne({
+            _id: request.params.postId
+        }, function(error, post) {
+            if(!error) {
+                if(_.isNull(post)) {
+                    reply(Boom.notFound('Cannot find post with that ID'));
+                }
+                reply({
+                    code: 200,
+                    data: post
+                });
+            } else {
+                reply(Boom.notFound('Cannot find post with that ID'));
             }
         });
     }

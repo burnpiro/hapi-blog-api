@@ -35,10 +35,7 @@ module.exports.create = {
 };
 
 module.exports.getOne = {
-    auth: {
-        strategy: 'token',
-        scope: ['user']
-    },
+    auth: false,
     handler: function(request, reply) {
         User.findOne({
             userName: request.params.userName,
@@ -116,10 +113,7 @@ module.exports.validateToken = function(decodedToken, callback) {
 };
 
 module.exports.getAll = {
-    auth: {
-        strategy: 'token',
-        scope: ['user']
-    },
+    auth: false,
     handler: function(request, reply) {
         User.find({ deleted: {$ne: true} }, function(error, users) {
             if(!error) {

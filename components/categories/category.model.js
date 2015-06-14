@@ -7,6 +7,7 @@ var categorySchema = new Schema({
     parent        : { type: String, trim: true },
     path          : { type: String, required: true, trim: true },
     name          : { type: String, required: true, trim: true },
+    type          : { type: String, required: true, trim: true },
     posts         : [{ type: Schema.Types.ObjectId, ref: 'Post'}]
 });
 
