@@ -29,7 +29,8 @@ module.exports.create = {
             parent: Joi.any(),
             path: Joi.string().required(),
             name: Joi.string().required(),
-            type: Joi.string().required()
+            type: Joi.string().required(),
+            icon: Joi.string()
         }
     },
     auth: {
@@ -106,7 +107,8 @@ module.exports.update = {
             parent: Joi.any(),
             path: Joi.string().required(),
             name: Joi.string().required(),
-            type: Joi.string().required()
+            type: Joi.string().required(),
+            icon: Joi.string()
         }
     },
     auth: {

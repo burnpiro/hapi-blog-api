@@ -8,6 +8,7 @@ var categorySchema = new Schema({
     path          : { type: String, required: true, trim: true },
     name          : { type: String, required: true, trim: true },
     type          : { type: String, required: true, trim: true },
+    icon          : { type: String, required: false, trim: true },
     posts         : [{ type: Schema.Types.ObjectId, ref: 'Post'}]
 });
 

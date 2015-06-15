@@ -51,7 +51,9 @@ module.exports.create = {
         payload: {
             _category: Joi.string().required(),
             name: Joi.string().required(),
-            content: Joi.string()
+            content: Joi.string(),
+            icon: Joi.string(),
+            shortText: Joi.string()
         }
     },
     auth: {
