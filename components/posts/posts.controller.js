@@ -58,7 +58,7 @@ module.exports.create = {
     },
     auth: {
         strategy: 'token',
-        scope: ['user']
+        scope: ['user', 'admin']
     },
     handler: function(request, reply) {
         Category.findOne({
@@ -75,7 +75,7 @@ module.exports.create = {
                         if (11000 === error.code || 11001 === error.code) {
                             reply(Boom.forbidden('category id already taken'));
                         } else {
-                            reply(Boom.forbidden(getErrorMessageFrom(error)));
+                            reply(Boom.forbidden(error));
                         }
                     }
                 });

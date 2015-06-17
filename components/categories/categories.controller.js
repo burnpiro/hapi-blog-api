@@ -29,13 +29,13 @@ module.exports.create = {
             parent: Joi.any(),
             path: Joi.string().required(),
             name: Joi.string().required(),
-            type: Joi.string().required(),
+            type: Joi.string(),
             icon: Joi.string()
         }
     },
     auth: {
         strategy: 'token',
-        scope: ['user']
+        scope: ['user', 'admin']
     },
     handler: function(request, reply) {
         var category = new Category(request.payload);
@@ -46,7 +46,7 @@ module.exports.create = {
                 if(11000 === error.code || 11001 === error.code) {
                     reply(Boom.forbidden('category id already taken'));
                 } else {
-                    reply(Boom.forbidden(getErrorMessageFrom(error)));
+                    reply(Boom.forbidden(error));
                 }
             }
         });
@@ -113,7 +113,7 @@ module.exports.update = {
     },
     auth: {
         strategy: 'token',
-        scope: ['user']
+        scope: ['user', 'admin']
     },
     handler: function(request, reply) {
         Category.findOneAndUpdate({
@@ -130,7 +130,7 @@ module.exports.update = {
 module.exports.remove = {
     auth: {
         strategy: 'token',
-        scope: ['user']
+        scope: ['user', 'admin']
     },
     handler: function(request, reply) {
         Category.findOne({
