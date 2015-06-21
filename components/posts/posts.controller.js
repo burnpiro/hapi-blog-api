@@ -51,7 +51,8 @@ module.exports.create = {
         payload: {
             _category: Joi.string().required(),
             name: Joi.string().required(),
-            content: Joi.string(),
+            author: Joi.string().required(),
+            content: Joi.string().required(),
             icon: Joi.string(),
             shortText: Joi.string()
         }
@@ -90,7 +91,9 @@ module.exports.getOne = {
     handler: function(request, reply) {
         Post.findOne({
             _id: request.params.postId
-        }, function(error, post) {
+        })
+        .populate('_category', '_id name')
+        .exec(function(error, post) {
             if(!error) {
                 if(_.isNull(post)) {
                     reply(Boom.notFound('Cannot find post with that ID'));

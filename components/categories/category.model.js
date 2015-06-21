@@ -12,6 +12,6 @@ var categorySchema = new Schema({
     posts         : [{ type: Schema.Types.ObjectId, ref: 'Post'}]
 });
 
-var category = mongoose.model('category', categorySchema);
+var category = mongoose.model('Category', categorySchema);
 
 module.exports = exports = category;
