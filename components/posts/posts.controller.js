@@ -71,7 +71,7 @@ module.exports.create = {
                 var post = new Post(request.payload);
                 post.save(function (error, category) {
                     if (!error) {
-                        reply(post).created('/posts/' + post._id);
+                        reply({message: 'Post updated successful', data: post, code: 200});
                     } else {
                         if (11000 === error.code || 11001 === error.code) {
                             reply(Boom.forbidden('category id already taken'));
@@ -129,7 +129,7 @@ module.exports.update = {
             _id: request.params.postId
         }, request.payload, function(error, post) {
             if (!error) {
-                reply(post).created('/posts/' + post._id);
+                reply({message: 'Post updated successful', data: post, code: 200});
             } else {
                 if (11000 === error.code || 11001 === error.code) {
                     reply(Boom.forbidden('Cannot update post'));
