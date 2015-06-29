@@ -108,3 +108,35 @@ module.exports.getOne = {
         });
     }
 };
+
+module.exports.update = {
+    validate: {
+        payload: {
+            _category: Joi.string().required(),
+            name: Joi.string().required(),
+            author: Joi.string().required(),
+            content: Joi.string().required(),
+            icon: Joi.string(),
+            shortText: Joi.string()
+        }
+    },
+    auth: {
+        strategy: 'token',
+        scope: ['user', 'admin']
+    },
+    handler: function(request, reply) {
+        Post.update({
+            _id: request.params.postId
+        }, request.payload, function(error, post) {
+            if (!error) {
+                reply(post).created('/posts/' + post._id);
+            } else {
+                if (11000 === error.code || 11001 === error.code) {
+                    reply(Boom.forbidden('Cannot update post'));
+                } else {
+                    reply(Boom.forbidden(error));
+                }
+            }
+        });
+    }
+};

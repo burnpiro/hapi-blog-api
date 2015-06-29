@@ -93,20 +93,16 @@ module.exports.login = {
 
 module.exports.validateToken = function(decodedToken, callback) {
     if(decodedToken.userName && decodedToken.iat){
-        if(moment().diff(moment(decodedToken.iat*1000), 'seconds') < config.token.tokenExpire) {
-            User.findOne({
-                userName: decodedToken.userName,
-                deleted: {$ne: true}
-            }, function(error, matched) {
-                if(!_.isNull(matched)) {
-                    return callback(error, true, {userName: matched.userName, scope: [matched.scope]});
-                } else {
-                    return callback(error, false, decodedToken);
-                }
-            });
-        } else {
-            return callback(Boom.badRequest('Token expired'), false, {})
-        }
+        User.findOne({
+            userName: decodedToken.userName,
+            deleted: {$ne: true}
+        }, function(error, matched) {
+            if(!_.isNull(matched)) {
+                return callback(error, true, {userName: matched.userName, scope: [matched.scope]});
+            } else {
+                return callback(error, false, decodedToken);
+            }
+        });
     } else {
         return callback(Boom.badRequest('Invalid Token'), false, {})
     }
