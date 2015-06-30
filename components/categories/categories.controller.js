@@ -27,7 +27,7 @@ module.exports.create = {
         payload: {
             _id: Joi.string().required(),
             parent: Joi.any(),
-            path: Joi.string().required(),
+            path: Joi.any(),
             name: Joi.string().required(),
             type: Joi.string(),
             icon: Joi.string()
@@ -41,7 +41,7 @@ module.exports.create = {
         var category = new Category(request.payload);
         category.save(function(error, category) {
             if(!error) {
-                reply(category).created('/categories/' + category._id);
+                reply({message: 'Category created successfully', data: category});
             } else {
                 if(11000 === error.code || 11001 === error.code) {
                     reply(Boom.forbidden('category id already taken'));
@@ -105,9 +105,9 @@ module.exports.update = {
     validate: {
         payload: {
             parent: Joi.any(),
-            path: Joi.string().required(),
+            path: Joi.any(),
             name: Joi.string().required(),
-            type: Joi.string().required(),
+            type: Joi.string(),
             icon: Joi.string()
         }
     },
@@ -118,11 +118,11 @@ module.exports.update = {
     handler: function(request, reply) {
         Category.findOneAndUpdate({
             _id: request.params.categoryId
-        }, request.payload, {overwrite: true}, function(error) {
+        }, request.payload, {overwrite: true}, function(error, category) {
             if(error) {
                 reply(Boom.badImplementation('Cannot update category'));
             }
-            reply({message: 'Category updated successfully'});
+            reply({message: 'Category updated successfully', data: category});
         });
     }
 };

@@ -5,7 +5,7 @@ var Post       = require('../posts/post.model')
 var categorySchema = new Schema({
     _id           : { type: String, required: true, trim: true },
     parent        : { type: String, trim: true },
-    path          : { type: String, required: true, trim: true },
+    path          : { type: String, trim: true },
     name          : { type: String, required: true, trim: true },
     type          : { type: String, required: false, trim: true },
     icon          : { type: String, required: false, trim: true },
