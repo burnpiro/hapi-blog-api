@@ -20,16 +20,18 @@
   },
   "license": "MIT",
   "dependencies": {
-    "hapi": "~8.*",
-    "mongoose": "~4.*",
-    "joi": "~6.*",
-    "boom": "~2.*",
-    "lodash": "~3.*",
-    "hapi-auth-jwt": "~2.*",
-    "jsonwebtoken": "~5.*",
-    "moment": "~2.*",
     "bcrypt": "~0.8.*",
-    "mongoose-softdelete": "~0.6.*"
+    "boom": "~2.*",
+    "hapi": "~8.*",
+    "hapi-auth-jwt": "~2.*",
+    "joi": "~6.*",
+    "jsonwebtoken": "~5.*",
+    "lodash": "~3.*",
+    "moment": "~2.*",
+    "mongoose": "~4.*",
+    "mongoose-softdelete": "~0.6.*",
+    "multiparty": "^4.1.2",
+    "walk": "^2.3.9"
   },
   "devDependencies": {
     "gulp": "~3.*",

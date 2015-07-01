@@ -3,7 +3,7 @@ module.exports = {
         name: 'Hapi Blog API'
     },
     server: {
-        host: '192.168.1.1',
+        host: 'localhost',
         port: 8080
     },
     database: {
@@ -23,5 +23,9 @@ module.exports = {
     token: {
         privateKey: 'BbZJjyoXAdr8BUZuiKKARWimKfrSmQ6fv8kZ7OFfc',
         tokenExpire: 60*60*24 // 1 day
-    }
+    },
+    publicFolder: './public',
+    uploadFolder: '/uploads',
+    MixFolder: './public/uploads',
+    MixInsideFolder: './public/uploads/'
 };
