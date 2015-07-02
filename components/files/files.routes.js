@@ -1,7 +1,7 @@
-var UsersController = require('./files.controller');
+var FilesController = require('./files.controller');
 
 module.exports = [
-    {   method: 'POST',   path: '/files',   config: UsersController.upload },
-    {   method: 'GET',   path: '/files/{fileName}',   config: UsersController.getOne },
-    {   method: 'GET',   path: '/files',   config: UsersController.getAll }
+    {   method: 'POST',   path: '/files',   config: FilesController.upload },
+    {   method: 'GET',   path: '/files/{fileName}',   config: FilesController.getOne },
+    {   method: 'GET',   path: '/files',   config: FilesController.getAll }
 ];
