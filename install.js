@@ -3,7 +3,7 @@ var db = require('./database');
 
 var admin = {
     userName: 'admin@localhost',
-    password: 'N3wPassw0rd',
+    password: 'testtest',
     scope: 'admin'
 };
 

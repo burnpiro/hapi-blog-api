@@ -8,6 +8,7 @@ var postSchema = new Schema({
     icon          : { type: String, required: false, trim: true },
     shortText     : { type: String, required: false, trim: true },
     author        : { type: String, required: true, trim: true },
+    image         : { type: String, required: true, trim: true },
     content       : { type: String, required: true },
     createdAt     : { type: Date, default: Date.now }
 });
