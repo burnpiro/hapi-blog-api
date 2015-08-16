@@ -7,7 +7,7 @@ var Post = require('./post.model');
 module.exports.getAll = {
     auth: false,
     handler: function(request, reply) {
-        Post.find({}, function(error, posts) {
+        Post.find({}, null, {sort: {createdAt: -1}},  function(error, posts) {
             if(!error) {
                 if(_.isNull(posts)) {
                     reply(Boom.notFound('There is no posts added yet'));
@@ -25,7 +25,9 @@ module.exports.search = {
     validate: {
         payload: {
             _category: Joi.string(),
-            name: Joi.string()
+            name: Joi.string(),
+            limit: Joi.number(),
+            offset: Joi.number()
         }
     },
     auth: false,
@@ -33,7 +35,19 @@ module.exports.search = {
         if(!_.isUndefined(request.payload.name)) {
             request.payload.name = new RegExp(''+request.payload.name+'', "i");
         }
-        Post.find(request.payload, function(error, posts) {
+        var query = {};
+        if(!_.isUndefined(request.payload._category)) {
+            query._category = request.payload._category;
+        }
+        if(!_.isUndefined(request.payload.name)) {
+            query.name = request.payload.name;
+        }
+        Post.find(query, null,
+            {
+                skip: !_.isUndefined(request.payload.offset) ? request.payload.offset : 0,
+                limit: !_.isUndefined(request.payload.limit) ? request.payload.limit : 12,
+                sort: {createdAt: -1}
+            }, function(error, posts) {
             if(!error) {
                 console.log(posts);
                 if(_.isNull(posts)) {
