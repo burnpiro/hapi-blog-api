@@ -24,13 +24,18 @@ module.exports.getAll = {
 module.exports.search = {
     validate: {
         payload: {
-            _category: Joi.string().required()
+            _category: Joi.string(),
+            name: Joi.string()
         }
     },
     auth: false,
     handler: function(request, reply) {
+        if(!_.isUndefined(request.payload.name)) {
+            request.payload.name = new RegExp(''+request.payload.name+'', "i");
+        }
         Post.find(request.payload, function(error, posts) {
             if(!error) {
+                console.log(posts);
                 if(_.isNull(posts)) {
                     reply(Boom.notFound('There is no posts added yet'));
                 }

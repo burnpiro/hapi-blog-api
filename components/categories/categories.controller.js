@@ -64,6 +64,9 @@ module.exports.search = {
     },
     auth: false,
     handler: function(request, reply) {
+        if(!_.isUndefined(request.payload.name)) {
+            request.payload.name = new RegExp(''+request.payload.name+'', "i");
+        }
         Category.find(request.payload, function(error, categories) {
             if(!error) {
                 if(_.isNull(categories)) {
