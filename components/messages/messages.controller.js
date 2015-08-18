@@ -14,7 +14,7 @@ module.exports.getAll = {
                 if(_.isNull(messages)) {
                     reply(Boom.notFound('There is no messages added yet'));
                 }
-                reply(messages);
+                reply({code: 200, data: messages});
             } else {
                 reply(Boom.badImplementation(error));
             }
