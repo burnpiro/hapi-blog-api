@@ -49,7 +49,6 @@ module.exports.search = {
                 sort: {createdAt: -1}
             }, function(error, posts) {
             if(!error) {
-                console.log(posts);
                 if(_.isNull(posts)) {
                     reply(Boom.notFound('There is no posts added yet'));
                 }
@@ -88,6 +87,7 @@ module.exports.create = {
             if(error || _.isNull(category)) {
                 reply(Boom.notFound('Cannot find category'));
             } else {
+                request.payload.image = request.payload.image.slice(request.payload.image.split('px')[0].length+2);
                 var post = new Post(request.payload);
                 post.save(function (error, category) {
                     if (!error) {
@@ -146,6 +146,7 @@ module.exports.update = {
         scope: ['user', 'admin']
     },
     handler: function(request, reply) {
+        request.payload.image = request.payload.image.slice(request.payload.image.split('px')[0].length+2);
         Post.update({
             _id: request.params.postId
         }, request.payload, function(error, post) {

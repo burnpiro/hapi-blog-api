@@ -5,7 +5,8 @@ var moment = require('moment');
 var config = require('../../config');
 var fs = require('fs'),
     walk = require('walk'),
-    multiparty = require('multiparty');
+    multiparty = require('multiparty'),
+    im = require('imagemagick');
 
 module.exports.upload = {
     payload: {
@@ -35,10 +36,47 @@ module.exports.upload = {
 var upload = function(files, reply) {
     fs.readFile(files.file[0].path, function(err, data) {
         checkFileExist();
-        fs.writeFile(config.MixInsideFolder + slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename), data, function(err) {
+        var newPath = slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename);
+        fs.writeFile(config.MixInsideFolder + newPath, data, function(err) {
             if (err) {
                 return reply(err);
             } else {
+                im.resize({
+                    srcPath: config.MixInsideFolder + newPath,
+                    dstPath: config.MixInsideFolder + '1920px' +newPath,
+                    width:   1920
+                }, function(err){
+                    if (err) {
+                        console.log('Cannot resize image');
+                    }
+                });
+                im.resize({
+                    srcPath: config.MixInsideFolder + newPath,
+                    dstPath: config.MixInsideFolder + '1024px' +newPath,
+                    width:   1024
+                }, function(err){
+                    if (err) {
+                        console.log('Cannot resize image');
+                    }
+                });
+                im.resize({
+                    srcPath: config.MixInsideFolder + newPath,
+                    dstPath: config.MixInsideFolder + '400px' +newPath,
+                    width:   400
+                }, function(err){
+                    if (err) {
+                        console.log('Cannot resize image');
+                    }
+                });
+                im.resize({
+                    srcPath: config.MixInsideFolder + newPath,
+                    dstPath: config.MixInsideFolder + '160px' +newPath,
+                    width:   160
+                }, function(err){
+                    if (err) {
+                        console.log('Cannot resize image');
+                    }
+                });
                 return reply({code: 200, message: 'File uploaded successfully',
                     data: {
                         path: config.MixInsideFolder + slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename),
@@ -74,9 +112,17 @@ var checkFileExist = function() {
 module.exports.getOne = {
     auth: false,
     handler: function(request, reply) {
+        if(!_.isUndefined(request.params.size)) {
+            var size = request.params.size;
+        }
         var file = request.params.fileName,
-            path = config.publicFolder + config.uploadFolder + "/" + file,
-            ext = file.substr(file.lastIndexOf('.') + 1);
+            ext = getExtension(file);
+
+        var path = config.publicFolder + config.uploadFolder + "/" +file;
+        if(!_.isUndefined(size)) {
+            path = config.publicFolder + config.uploadFolder + "/" + size + 'px' +file;
+        }
+        console.log(path);
         fs.readFile(path, function(error, content) {
             if (error) {
                 return reply("file not found");
@@ -134,9 +180,10 @@ module.exports.getOne = {
  *get fileList
  */
 
-module.exports.getAll = {
+module.exports.getAllImages = {
     auth: false,
     handler: function(request, reply) {
+        var size = request.params.size;
         var files = [];
         // Walker options
         var walker = walk.walk(config.publicFolder + config.uploadFolder, {
@@ -145,7 +192,9 @@ module.exports.getAll = {
 
         walker.on('file', function(root, stat, next) {
             // Add this file to the list of files
-            files.push(stat.name);
+            if(isImage(stat.name) && hasResolution(stat.name, size)) {
+                files.push(stat.name);
+            }
             next();
         });
 
@@ -163,4 +212,21 @@ function slug(input)
         .toLowerCase() // Camel case is bad
         .replace(/[^a-z0-9._\-~!\+\s]+/g, '') // Exchange invalid chars
         .replace(/[\s]+/g, '-'); // Swap whitespace for single hyphen
+}
+
+function getExtension(input)
+{
+    var re = /(?:\.([^.]+))?$/;
+    return re.exec(input)[1];
+}
+
+function isImage(input)
+{
+    var extensions = ['jpg', 'jpeg', 'gif', 'png'];
+    return _.includes(extensions, getExtension(input));
+}
+
+function hasResolution(input, resolution)
+{
+    return input.split('px')[0] === resolution;
 }
