@@ -3,7 +3,7 @@ module.exports = {
         name: 'Hapi Blog API'
     },
     server: {
-        host: '192.168.1.3',
+        host: '10.10.30.130',
         port: 8080
     },
     database: {
@@ -27,5 +27,8 @@ module.exports = {
     publicFolder: './public',
     uploadFolder: '/uploads',
     MixFolder: './public/uploads',
-    MixInsideFolder: './public/uploads/'
+    MixInsideFolder: './public/uploads/',
+    defaultValues: {
+        author: 'Kemal Erdem'
+    }
 };
