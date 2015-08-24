@@ -46,7 +46,6 @@ module.exports.getOne = {
         if(!_.isUndefined(size)) {
             path = config.publicFolder + config.uploadFolder + "/" + size + 'px' +file;
         }
-        console.log(path);
         fs.readFile(path, function(error, content) {
             if (error) {
                 return reply("file not found");
@@ -117,7 +116,7 @@ module.exports.getAllImages = {
         walker.on('file', function(root, stat, next) {
             // Add this file to the list of files
             if(FileService.isImage(stat.name) && FileService.hasResolution(stat.name, size)) {
-                files.push(size+'px'+stat.name);
+                files.push(stat.name.split('px').pop() );
             }
             next();
         });

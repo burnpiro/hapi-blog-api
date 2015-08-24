@@ -147,7 +147,6 @@ module.exports.update = {
         scope: ['user', 'admin']
     },
     handler: function(request, reply) {
-        request.payload.image = request.payload.image.slice(request.payload.image.split('px')[0].length+2);
         Post.update({
             _id: request.params.postId
         }, request.payload, function(error, post) {
