@@ -117,7 +117,7 @@ module.exports.getAllImages = {
         walker.on('file', function(root, stat, next) {
             // Add this file to the list of files
             if(FileService.isImage(stat.name) && FileService.hasResolution(stat.name, size)) {
-                files.push(stat.name);
+                files.push(size+'px'+stat.name);
             }
             next();
         });
@@ -127,30 +127,3 @@ module.exports.getAllImages = {
         });
     }
 };
-
-function slug(input)
-{
-    return input
-        .replace(/^\s\s*/, '') // Trim start
-        .replace(/\s\s*$/, '') // Trim end
-        .toLowerCase() // Camel case is bad
-        .replace(/[^a-z0-9._\-~!\+\s]+/g, '') // Exchange invalid chars
-        .replace(/[\s]+/g, '-'); // Swap whitespace for single hyphen
-}
-
-function getExtension(input)
-{
-    var re = /(?:\.([^.]+))?$/;
-    return re.exec(input)[1];
-}
-
-function isImage(input)
-{
-    var extensions = ['jpg', 'jpeg', 'gif', 'png'];
-    return _.includes(extensions, getExtension(input));
-}
-
-function hasResolution(input, resolution)
-{
-    return input.split('px')[0] === resolution;
-}

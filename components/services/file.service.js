@@ -59,10 +59,10 @@ fileService.upload = function(files, reply) {
                     }
                 });
                 return reply({code: 200, message: 'File uploaded successfully',
-                    data: {
-                        path: config.MixInsideFolder + fileService.slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename),
-                        name: fileService.slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename)
-                    }});
+                    uploaded: 1,
+                    url: 'http://'+config.server.host+':'+config.server.port + config.filesUrlPath + '1024px' + fileService.slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename),
+                    fileName: fileService.slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename)
+                });
             }
         });
     });
