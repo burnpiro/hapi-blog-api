@@ -29,5 +29,8 @@ module.exports = {
     MixFolder: './public/uploads',
     MixInsideFolder: './public/uploads/',
     imagesUrlPath: '/images/',
-    filesUrlPath: '/files/'
+    filesUrlPath: '/files/',
+    defaultValues: {
+        author: 'Kemal Erdem'
+    }
 };

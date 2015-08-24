@@ -3,6 +3,7 @@ var _ = require('lodash');
 var Boom = require('boom');
 var moment = require('moment');
 var config = require('../../config');
+var FileService = require('../services/file.service');
 var fs = require('fs'),
     walk = require('walk'),
     multiparty = require('multiparty'),
@@ -18,92 +19,14 @@ module.exports.upload = {
     auth: false,
     handler: function(request,reply){
         var form = new multiparty.Form();
-        //console.log(_.keys(request), request);
         form.parse(request.payload, function(err, fields, files) {
             if (err) {
                 return reply(err);
             } else {
-                upload(files, reply);
+                FileService.upload(files, reply);
             }
         });
     }
-};
-
-
-/*
- * upload file function
- */
-
-var upload = function(files, reply) {
-    fs.readFile(files.file[0].path, function(err, data) {
-        checkFileExist();
-        var newPath = slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename);
-        fs.writeFile(config.MixInsideFolder + newPath, data, function(err) {
-            if (err) {
-                return reply(err);
-            } else {
-                im.resize({
-                    srcPath: config.MixInsideFolder + newPath,
-                    dstPath: config.MixInsideFolder + '1920px' +newPath,
-                    width:   1920
-                }, function(err){
-                    if (err) {
-                        console.log('Cannot resize image');
-                    }
-                });
-                im.resize({
-                    srcPath: config.MixInsideFolder + newPath,
-                    dstPath: config.MixInsideFolder + '1024px' +newPath,
-                    width:   1024
-                }, function(err){
-                    if (err) {
-                        console.log('Cannot resize image');
-                    }
-                });
-                im.resize({
-                    srcPath: config.MixInsideFolder + newPath,
-                    dstPath: config.MixInsideFolder + '400px' +newPath,
-                    width:   400
-                }, function(err){
-                    if (err) {
-                        console.log('Cannot resize image');
-                    }
-                });
-                im.resize({
-                    srcPath: config.MixInsideFolder + newPath,
-                    dstPath: config.MixInsideFolder + '160px' +newPath,
-                    width:   160
-                }, function(err){
-                    if (err) {
-                        console.log('Cannot resize image');
-                    }
-                });
-                return reply({code: 200, message: 'File uploaded successfully',
-                        uploaded: 1,
-                        url: 'http://'+config.server.host+':'+config.server.port + config.filesUrlPath + '1024px' + slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename),
-                        fileName: slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename)
-                    });
-            }
-        });
-    });
-};
-
-/*
- * Check File existence and create if not exist
- */
-
-var checkFileExist = function() {
-    fs.exists(config.publicFolder, function(exists) {
-        if (exists === false) {
-            fs.mkdirSync(config.publicFolder);
-        }
-
-        fs.exists(config.MixFolder, function(exists) {
-            if (exists === false) {
-                fs.mkdirSync(config.MixFolder);
-            }
-        });
-    });
 };
 
 /**
@@ -117,7 +40,7 @@ module.exports.getOne = {
             var size = request.params.size;
         }
         var file = request.params.fileName,
-            ext = getExtension(file);
+            ext = FileService.getExtension(file);
 
         var path = config.publicFolder + config.uploadFolder + "/" +file;
         if(!_.isUndefined(size)) {
@@ -193,8 +116,8 @@ module.exports.getAllImages = {
 
         walker.on('file', function(root, stat, next) {
             // Add this file to the list of files
-            if(isImage(stat.name) && hasResolution(stat.name, size)) {
-                files.push(size+'px'+stat.name);
+            if(FileService.isImage(stat.name) && FileService.hasResolution(stat.name, size)) {
+                files.push(stat.name);
             }
             next();
         });

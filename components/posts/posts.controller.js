@@ -3,6 +3,7 @@ var _ = require('lodash');
 var Boom = require('boom');
 var Category = require('../categories/category.model');
 var Post = require('./post.model');
+var config = require('../../config');
 
 module.exports.getAll = {
     auth: false,
@@ -69,7 +70,7 @@ module.exports.create = {
         payload: {
             _category: Joi.string().required(),
             name: Joi.string().required(),
-            author: Joi.string().required(),
+            author: Joi.string().default(config.defaultValues.author),
             content: Joi.string().required(),
             image: Joi.string().required(),
             icon: Joi.string(),
@@ -134,7 +135,7 @@ module.exports.update = {
         payload: {
             _category: Joi.string().required(),
             name: Joi.string().required(),
-            author: Joi.string().required(),
+            author: Joi.string().default(config.defaultValues.author),
             content: Joi.string().required(),
             image: Joi.string().required(),
             icon: Joi.string(),
