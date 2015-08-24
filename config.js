@@ -27,5 +27,7 @@ module.exports = {
     publicFolder: './public',
     uploadFolder: '/uploads',
     MixFolder: './public/uploads',
-    MixInsideFolder: './public/uploads/'
+    MixInsideFolder: './public/uploads/',
+    imagesUrlPath: '/images/',
+    filesUrlPath: '/files/'
 };

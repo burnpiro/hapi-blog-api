@@ -18,6 +18,7 @@ module.exports.upload = {
     auth: false,
     handler: function(request,reply){
         var form = new multiparty.Form();
+        //console.log(_.keys(request), request);
         form.parse(request.payload, function(err, fields, files) {
             if (err) {
                 return reply(err);
@@ -78,10 +79,10 @@ var upload = function(files, reply) {
                     }
                 });
                 return reply({code: 200, message: 'File uploaded successfully',
-                    data: {
-                        path: config.MixInsideFolder + slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename),
-                        name: slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename)
-                    }});
+                        uploaded: 1,
+                        url: 'http://'+config.server.host+':'+config.server.port + config.filesUrlPath + '1024px' + slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename),
+                        fileName: slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename)
+                    });
             }
         });
     });
@@ -193,7 +194,7 @@ module.exports.getAllImages = {
         walker.on('file', function(root, stat, next) {
             // Add this file to the list of files
             if(isImage(stat.name) && hasResolution(stat.name, size)) {
-                files.push(stat.name);
+                files.push(size+'px'+stat.name);
             }
             next();
         });
