@@ -16,7 +16,10 @@ module.exports.upload = {
         //allow: 'multipart/form-data',
         parse: false
     },
-    auth: false,
+    auth: {
+        strategy: 'token',
+        scope: ['user', 'admin']
+    },
     handler: function(request,reply){
         var form = new multiparty.Form();
         form.parse(request.payload, function(err, fields, files) {
