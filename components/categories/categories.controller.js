@@ -26,7 +26,7 @@ module.exports.create = {
     validate: {
         payload: {
             _id: Joi.string().required(),
-            parent: Joi.any(),
+            parent: Joi.any().default(''),
             path: Joi.any(),
             name: Joi.string().required(),
             type: Joi.string(),
@@ -71,11 +71,12 @@ module.exports.search = {
             if(!error) {
                 if(_.isNull(categories)) {
                     reply(Boom.notFound('There is no categories added yet'));
+                } else {
+                    reply({
+                        code: 200,
+                        data: categories
+                    });
                 }
-                reply({
-                    code: 200,
-                    data: categories
-                });
             } else {
                 reply(Boom.badImplementation(error));
             }
@@ -92,11 +93,12 @@ module.exports.getOne = {
             if(!error) {
                 if(_.isNull(category)) {
                     reply(Boom.notFound('Cannot find category with that ID'));
+                } else {
+                    reply({
+                        code: 200,
+                        data: category
+                    });
                 }
-                reply({
-                    code: 200,
-                    data: category
-                });
             } else {
                 reply(Boom.notFound('Cannot find category with that ID'));
             }
@@ -107,7 +109,7 @@ module.exports.getOne = {
 module.exports.update = {
     validate: {
         payload: {
-            parent: Joi.any(),
+            parent: Joi.any().default(''),
             path: Joi.any(),
             name: Joi.string().required(),
             type: Joi.string(),
@@ -124,8 +126,9 @@ module.exports.update = {
         }, request.payload, {overwrite: true}, function(error, category) {
             if(error) {
                 reply(Boom.badImplementation('Cannot update category'));
+            } else {
+                reply({message: 'Category updated successfully', data: category});
             }
-            reply({message: 'Category updated successfully', data: category});
         });
     }
 };
