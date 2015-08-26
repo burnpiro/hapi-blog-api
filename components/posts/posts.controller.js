@@ -88,7 +88,6 @@ module.exports.create = {
             if(error || _.isNull(category)) {
                 reply(Boom.notFound('Cannot find category'));
             } else {
-                request.payload.image = request.payload.image.slice(request.payload.image.split('px')[0].length+2);
                 var post = new Post(request.payload);
                 post.save(function (error, category) {
                     if (!error) {
