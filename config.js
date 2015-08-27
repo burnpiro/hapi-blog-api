@@ -31,6 +31,7 @@ module.exports = {
     imagesUrlPath: '/images/',
     filesUrlPath: '/files/',
     defaultValues: {
-        author: 'Kemal Erdem'
+        author: 'Kemal Erdem',
+        display: true
     }
 };

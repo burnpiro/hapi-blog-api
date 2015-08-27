@@ -36,7 +36,7 @@ module.exports.search = {
         if(!_.isUndefined(request.payload.name)) {
             request.payload.name = new RegExp(''+request.payload.name+'', "i");
         }
-        var query = {};
+        var query = { display: true };
         if(!_.isUndefined(request.payload._category)) {
             query._category = request.payload._category;
         }
@@ -74,7 +74,8 @@ module.exports.create = {
             content: Joi.string().required(),
             image: Joi.string().required(),
             icon: Joi.string(),
-            shortText: Joi.string()
+            shortText: Joi.string(),
+            display: Joi.boolean().default(config.defaultValues.display)
         }
     },
     auth: {
@@ -138,7 +139,8 @@ module.exports.update = {
             content: Joi.string().required(),
             image: Joi.string().required(),
             icon: Joi.string(),
-            shortText: Joi.string()
+            shortText: Joi.string(),
+            display: Joi.boolean().default(config.defaultValues.display)
         }
     },
     auth: {
@@ -146,6 +148,7 @@ module.exports.update = {
         scope: ['user', 'admin']
     },
     handler: function(request, reply) {
+        console.log(request.auth);
         Post.update({
             _id: request.params.postId
         }, request.payload, function(error, post) {
