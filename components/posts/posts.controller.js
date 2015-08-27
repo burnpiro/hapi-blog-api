@@ -148,7 +148,6 @@ module.exports.update = {
         scope: ['user', 'admin']
     },
     handler: function(request, reply) {
-        console.log(request.auth);
         Post.update({
             _id: request.params.postId
         }, request.payload, function(error, post) {
