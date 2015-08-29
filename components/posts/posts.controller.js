@@ -8,7 +8,7 @@ var config = require('../../config');
 module.exports.getAll = {
     auth: false,
     handler: function(request, reply) {
-        Post.find({}, null, {sort: {createdAt: -1}},  function(error, posts) {
+        Post.find({deletedAt: null}, null, {sort: {createdAt: -1}},  function(error, posts) {
             if(!error) {
                 if(_.isNull(posts)) {
                     reply(Boom.notFound('There is no posts added yet'));
@@ -43,6 +43,7 @@ module.exports.search = {
         if(!_.isUndefined(request.payload.name)) {
             query.name = request.payload.name;
         }
+        query.deletedAt = null;
         Post.find(query, null,
             {
                 skip: !_.isUndefined(request.payload.offset) ? request.payload.offset : 0,
@@ -111,7 +112,7 @@ module.exports.getOne = {
     auth: false,
     handler: function(request, reply) {
         Post.findOne({
-            _id: request.params.postId
+            _id: request.params.postId, deletedAt: null
         })
         .populate('_category', '_id name')
         .exec(function(error, post) {
@@ -149,13 +150,35 @@ module.exports.update = {
     },
     handler: function(request, reply) {
         Post.update({
-            _id: request.params.postId
+            _id: request.params.postId, deletedAt: null
         }, request.payload, function(error, post) {
             if (!error) {
                 reply({message: 'Post updated successful', data: post, code: 200});
             } else {
                 if (11000 === error.code || 11001 === error.code) {
                     reply(Boom.forbidden('Cannot update post'));
+                } else {
+                    reply(Boom.forbidden(error));
+                }
+            }
+        });
+    }
+};
+
+module.exports.delete = {
+    auth: {
+        strategy: 'token',
+        scope: ['user', 'admin']
+    },
+    handler: function(request, reply) {
+        Post.update({
+            _id: request.params.postId
+        }, { deletedAt: Date.now() }, function(error, post) {
+            if (!error) {
+                reply({message: 'Post deleted successful', code: 200});
+            } else {
+                if (11000 === error.code || 11001 === error.code) {
+                    reply(Boom.forbidden('Cannot delete post'));
                 } else {
                     reply(Boom.forbidden(error));
                 }

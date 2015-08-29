@@ -11,7 +11,8 @@ var postSchema = new Schema({
     image         : { type: String, required: true, trim: true },
     content       : { type: String, required: true },
     display       : { type: Boolean, required: true, default: true },
-    createdAt     : { type: Date, default: Date.now }
+    createdAt     : { type: Date, default: Date.now },
+    deletedAt     : { type: Date, default: null }
 });
 
 var post = mongoose.model('Post', postSchema);

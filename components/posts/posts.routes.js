@@ -5,5 +5,6 @@ module.exports = [
     {   method: 'POST',   path: '/posts',   config: PostsController.create },
     {   method: 'POST',   path: '/posts/search',   config: PostsController.search },
     {   method: 'GET',   path: '/posts/{postId}',   config: PostsController.getOne },
-    {   method: 'PUT',   path: '/posts/{postId}',   config: PostsController.update }
+    {   method: 'PUT',   path: '/posts/{postId}',   config: PostsController.update },
+    {   method: 'DELETE',   path: '/posts/{postId}',   config: PostsController.delete }
 ];
