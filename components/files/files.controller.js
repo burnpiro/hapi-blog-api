@@ -39,6 +39,70 @@ module.exports.upload = {
 module.exports.getOne = {
     auth: false,
     handler: function(request, reply) {
+        var file = request.params.fileName,
+            ext = FileService.getExtension(file);
+
+        var path = config.publicFolder + config.uploadFolder + "/" +file;
+        fs.readFile(path, function(error, content) {
+            if (error) {
+                return reply("file not found");
+            }
+            var contentType;
+            switch (ext) {
+                case "pdf":
+                    contentType = 'application/pdf';
+                    break;
+                case "ppt":
+                    contentType = 'application/vnd.ms-powerpoint';
+                    break;
+                case "pptx":
+                    contentType = 'application/vnd.openxmlformats-officedocument.preplyentationml.preplyentation';
+                    break;
+                case "xls":
+                    contentType = 'application/vnd.ms-excel';
+                    break;
+                case "xlsx":
+                    contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                    break;
+                case "doc":
+                    contentType = 'application/msword';
+                    break;
+                case "docx":
+                    contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                    break;
+                case "csv":
+                    contentType = 'application/octet-stream';
+                    break;
+                case "png":
+                    contentType = 'image/png';
+                    break;
+                case "gif":
+                    contentType = 'image/gif';
+                    break;
+                case "jpg":
+                    contentType = 'image/jpeg';
+                    break;
+                case "jpeg":
+                    contentType = 'image/jpeg';
+                    break;
+                default:
+                    contentType = '';
+                    break;
+            }
+
+            reply(content).header('Content-Type', contentType).header("Content-Disposition", "attachment; filename=" + file);
+
+        });
+    }
+};
+
+/**
+ * get file
+ */
+
+module.exports.getOneWithSize = {
+    auth: false,
+    handler: function(request, reply) {
         if(!_.isUndefined(request.params.size)) {
             var size = request.params.size;
         }
