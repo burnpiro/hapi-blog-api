@@ -24,10 +24,10 @@ module.exports = {
         privateKey: 'BbZJjyoXAdr8BUZuiKKARWimKfrSmQ6fv8kZ7OFfc',
         tokenExpire: 60*60*24 // 1 day
     },
-    publicFolder: './public',
+    publicFolder: __dirname +'/public',
     uploadFolder: '/uploads',
-    MixFolder: './public/uploads',
-    MixInsideFolder: './public/uploads/',
+    MixFolder: __dirname + '/public/uploads',
+    MixInsideFolder: __dirname + '/public/uploads/',
     imagesUrlPath: '/images/',
     filesUrlPath: '/files/',
     defaultValues: {
