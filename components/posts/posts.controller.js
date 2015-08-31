@@ -73,7 +73,7 @@ module.exports.create = {
             name: Joi.string().required(),
             author: Joi.string().default(config.defaultValues.author),
             content: Joi.string().required(),
-            image: Joi.string().required(),
+            image: Joi.string(),
             icon: Joi.string(),
             shortText: Joi.string(),
             display: Joi.boolean().default(config.defaultValues.display)
@@ -138,7 +138,7 @@ module.exports.update = {
             name: Joi.string().required(),
             author: Joi.string().default(config.defaultValues.author),
             content: Joi.string().required(),
-            image: Joi.string().required(),
+            image: Joi.string(),
             icon: Joi.string(),
             shortText: Joi.string(),
             display: Joi.boolean().default(config.defaultValues.display)
