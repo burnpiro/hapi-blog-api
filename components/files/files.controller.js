@@ -60,8 +60,7 @@ module.exports.upload = {
 module.exports.getOne = {
     auth: false,
     handler: function(request, reply) {
-        var file = request.params.fileName,
-            ext = FileService.getExtension(file);
+        var file = request.params.fileName;
 
         var path = config.publicFolder + config.uploadFolder + "/" +file;
 
@@ -85,8 +84,7 @@ module.exports.getOneWithSize = {
         if(!_.isUndefined(request.params.size)) {
             var size = request.params.size;
         }
-        var file = request.params.fileName,
-            ext = FileService.getExtension(file);
+        var file = request.params.fileName;
 
         var path = config.publicFolder + config.uploadFolder + "/" +file;
         if(!_.isUndefined(size)) {

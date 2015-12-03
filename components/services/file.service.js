@@ -72,6 +72,7 @@ fileService.getFile = function(path, response) {
         if (error) {
             return response("file not found");
         }
+        var ext = fileService.getExtension(path);
         var contentType;
         switch (ext) {
             case "pdf":
