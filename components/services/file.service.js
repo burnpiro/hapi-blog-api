@@ -14,7 +14,7 @@ var fileService = {
  * upload file function
  */
 
-fileService.upload = function(files, reply) {
+fileService.upload = function(files, response) {
     fs.readFile(files.file[0].path, function(err, data) {
         fileService.checkFileExist();
         var newPath = fileService.slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename);
@@ -27,7 +27,7 @@ fileService.upload = function(files, reply) {
                     dstPath: config.MixInsideFolder + '1920px' +newPath,
                     width:   1920
                 }, function(err){
-                    if (err) {
+                    if (err) { 
                         console.log('Cannot resize image');
                     }
                 });
@@ -58,13 +58,68 @@ fileService.upload = function(files, reply) {
                         console.log('Cannot resize image');
                     }
                 });
-                return reply({code: 200, message: 'File uploaded successfully',
-                    uploaded: 1,
-                    url: 'http://'+config.server.host+':'+config.server.port + config.filesUrlPath + '1024px' + fileService.slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename),
-                    fileName: fileService.slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename)
+                return response({
+                    fileName: fileService.slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename),
+                    isImage: fileService.isImage(fileService.slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename))
                 });
             }
         });
+    });
+};
+
+fileService.getFile = function(path, response) {
+    fs.readFile(path, function(error, content) {
+        if (error) {
+            return response("file not found");
+        }
+        var contentType;
+        switch (ext) {
+            case "pdf":
+                contentType = 'application/pdf';
+                break;
+            case "ppt":
+                contentType = 'application/vnd.ms-powerpoint';
+                break;
+            case "pptx":
+                contentType = 'application/vnd.openxmlformats-officedocument.preplyentationml.preplyentation';
+                break;
+            case "xls":
+                contentType = 'application/vnd.ms-excel';
+                break;
+            case "xlsx":
+                contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                break;
+            case "doc":
+                contentType = 'application/msword';
+                break;
+            case "docx":
+                contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                break;
+            case "csv":
+                contentType = 'application/octet-stream';
+                break;
+            case "png":
+                contentType = 'image/png';
+                break;
+            case "gif":
+                contentType = 'image/gif';
+                break;
+            case "jpg":
+                contentType = 'image/jpeg';
+                break;
+            case "jpeg":
+                contentType = 'image/jpeg';
+                break;
+            default:
+                contentType = '';
+                break;
+        }
+
+        return response({
+            content: content,
+            contentType: contentType
+        });
+
     });
 };
 
@@ -117,3 +172,4 @@ module.exports.hasResolution = fileService.hasResolution;
 module.exports.isImage = fileService.isImage;
 module.exports.upload = fileService.upload;
 module.exports.getExtension = fileService.getExtension;
+module.exports.getFile = fileService.getFile;

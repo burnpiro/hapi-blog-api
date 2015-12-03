@@ -1,13 +1,10 @@
 var Joi = require('joi');
 var _ = require('lodash');
 var Boom = require('boom');
-var moment = require('moment');
 var config = require('../../config');
 var FileService = require('../services/file.service');
-var fs = require('fs'),
-    walk = require('walk'),
-    multiparty = require('multiparty'),
-    im = require('imagemagick');
+var Image = require('../galleries/image.model');
+var multiparty = require('multiparty');
 
 module.exports.upload = {
     payload: {
@@ -26,7 +23,31 @@ module.exports.upload = {
             if (err) {
                 return reply(err);
             } else {
-                FileService.upload(files, reply);
+                FileService.upload(files, function(responseImage) {
+                    if(FileService.isImage(responseImage.fileName)) {
+                        var image = new Image({
+                            name: responseImage.fileName,
+                            path: config.publicFolder + config.uploadFolder + "/" +responseImage.fileName
+                        });
+                        image.save(function(error, image) {
+                            if(!error) {
+                                reply({code: 200, message: 'Image uploaded successfully',
+                                    uploaded: 1,
+                                    url: 'http://'+config.server.host+':'+config.server.port + config.filesUrlPath + '1024px' + responseImage.fileName,
+                                    fileName: responseImage.fileName
+                                });
+                            } else {
+                                reply(Boom.badImplementation('Cannot save image'));
+                            }
+                        });
+                    } else {
+                        reply({code: 200, message: 'File uploaded successfully',
+                            uploaded: 1,
+                            url: 'http://'+config.server.host+':'+config.server.port + config.filesUrlPath + '1024px' + responseImage.fileName,
+                            fileName: responseImage.fileName
+                        });
+                    }
+                });
             }
         });
     }
@@ -43,55 +64,13 @@ module.exports.getOne = {
             ext = FileService.getExtension(file);
 
         var path = config.publicFolder + config.uploadFolder + "/" +file;
-        fs.readFile(path, function(error, content) {
-            if (error) {
-                return reply("file not found");
-            }
-            var contentType;
-            switch (ext) {
-                case "pdf":
-                    contentType = 'application/pdf';
-                    break;
-                case "ppt":
-                    contentType = 'application/vnd.ms-powerpoint';
-                    break;
-                case "pptx":
-                    contentType = 'application/vnd.openxmlformats-officedocument.preplyentationml.preplyentation';
-                    break;
-                case "xls":
-                    contentType = 'application/vnd.ms-excel';
-                    break;
-                case "xlsx":
-                    contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                    break;
-                case "doc":
-                    contentType = 'application/msword';
-                    break;
-                case "docx":
-                    contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-                    break;
-                case "csv":
-                    contentType = 'application/octet-stream';
-                    break;
-                case "png":
-                    contentType = 'image/png';
-                    break;
-                case "gif":
-                    contentType = 'image/gif';
-                    break;
-                case "jpg":
-                    contentType = 'image/jpeg';
-                    break;
-                case "jpeg":
-                    contentType = 'image/jpeg';
-                    break;
-                default:
-                    contentType = '';
-                    break;
-            }
 
-            reply(content).header('Content-Type', contentType).header("Content-Disposition", "attachment; filename=" + file);
-
+        FileService.getFile(path, function(contentResponse) {
+            if(_.isString(contentResponse)) {
+                return reply(contentResponse);
+            } else {
+                return reply(contentResponse.content).header('Content-Type', contentResponse.contentType).header("Content-Disposition", "attachment; filename=" + file)
+            }
         });
     }
 };
@@ -113,83 +92,47 @@ module.exports.getOneWithSize = {
         if(!_.isUndefined(size)) {
             path = config.publicFolder + config.uploadFolder + "/" + size + 'px' +file;
         }
-        fs.readFile(path, function(error, content) {
-            if (error) {
-                return reply("file not found");
+        FileService.getFile(path, function(contentResponse) {
+            if(_.isString(contentResponse)) {
+                return reply(contentResponse);
+            } else {
+                return reply(contentResponse.content).header('Content-Type', contentResponse.contentType).header("Content-Disposition", "attachment; filename=" + file)
             }
-            var contentType;
-            switch (ext) {
-                case "pdf":
-                    contentType = 'application/pdf';
-                    break;
-                case "ppt":
-                    contentType = 'application/vnd.ms-powerpoint';
-                    break;
-                case "pptx":
-                    contentType = 'application/vnd.openxmlformats-officedocument.preplyentationml.preplyentation';
-                    break;
-                case "xls":
-                    contentType = 'application/vnd.ms-excel';
-                    break;
-                case "xlsx":
-                    contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                    break;
-                case "doc":
-                    contentType = 'application/msword';
-                    break;
-                case "docx":
-                    contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-                    break;
-                case "csv":
-                    contentType = 'application/octet-stream';
-                    break;
-                case "png":
-                    contentType = 'image/png';
-                    break;
-                case "gif":
-                    contentType = 'image/gif';
-                    break;
-                case "jpg":
-                    contentType = 'image/jpeg';
-                    break;
-                case "jpeg":
-                    contentType = 'image/jpeg';
-                    break;
-                default:
-                    contentType = '';
-                    break;
-            }
-
-            reply(content).header('Content-Type', contentType).header("Content-Disposition", "attachment; filename=" + file);
-
         });
     }
 };
 
 /**
- *get fileList
+ *get images list
  */
 
 module.exports.getAllImages = {
+    validate: {
+        payload: {
+            limit: Joi.number(),
+            offset: Joi.number()
+        }
+    },
     auth: false,
     handler: function(request, reply) {
-        var size = request.params.size;
-        var files = [];
-        // Walker options
-        var walker = walk.walk(config.publicFolder + config.uploadFolder, {
-            followLinks: false
-        });
-
-        walker.on('file', function(root, stat, next) {
-            // Add this file to the list of files
-            if(FileService.isImage(stat.name) && FileService.hasResolution(stat.name, size)) {
-                files.push(stat.name.split('px').pop() );
-            }
-            next();
-        });
-
-        walker.on('end', function() {
-            return reply({data: files, code: 200});
-        });
+        var query = { };
+        Image.find(query, 'name',
+            {
+                skip: !_.isUndefined(request.payload.offset) ? request.payload.offset : 0,
+                limit: !_.isUndefined(request.payload.limit) ? request.payload.limit : 12,
+                sort: {createdAt: -1}
+            }, function(error, images) {
+                if(!error) {
+                    if(_.isNull(images)) {
+                        reply(Boom.notFound('There is no images added yet'));
+                    }
+                    reply({
+                        code: 200,
+                        data: images
+                    });
+                } else {
+                    reply(Boom.badImplementation(error));
+                }
+            });
     }
 };
