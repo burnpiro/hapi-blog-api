@@ -19,7 +19,7 @@ server.connection(
     }
 );
 
-server.register(require('hapi-auth-jwt'), function(error) {
+server.register([require('hapi-auth-jwt'), require('inert')], function(error) {
 
     server.auth.strategy('token', 'jwt', {
         key: config.token.privateKey,

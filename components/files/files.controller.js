@@ -57,13 +57,14 @@ module.exports.getOne = {
 
         var path = config.publicFolder + config.uploadFolder + "/" +file;
 
-        FileService.getFile(path, function(contentResponse) {
-            if(_.isString(contentResponse)) {
-                return reply(contentResponse);
-            } else {
-                return reply(contentResponse.content).header('Content-Type', contentResponse.contentType).header("Content-Disposition", "attachment; filename=" + file)
-            }
-        });
+        return reply.file(path);
+        //FileService.getFile(path, function(contentResponse) {
+        //    if(_.isString(contentResponse)) {
+        //        return reply(contentResponse);
+        //    } else {
+        //        return reply(contentResponse.content).header('Content-Type', contentResponse.contentType).header("Content-Disposition", "attachment; filename=" + file)
+        //    }
+        //});
     }
 };
 
