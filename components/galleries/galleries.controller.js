@@ -2,7 +2,7 @@ var Joi = require('joi');
 var _ = require('lodash');
 var Boom = require('boom');
 var Gallery = require('./gallery.model');
-var Image = require('./image.model');
+var File = require('../files/file.model');
 
 module.exports.create = {
     validate: {
@@ -49,7 +49,7 @@ module.exports.addImage = {
             if(_.isNull(gallery)) {
                 reply(Boom.notFound('Cannot find gallery with that ID'));
             }
-            var image = new Image(request.payload);
+            var image = new File(request.payload);
             image.save(function(error, image) {
                 if(!error) {
                     gallery.images.push(image);

@@ -3,7 +3,7 @@ var _ = require('lodash');
 var Boom = require('boom');
 var config = require('../../config');
 var FileService = require('../services/file.service');
-var Image = require('../galleries/image.model');
+var File = require('./file.model');
 var multiparty = require('multiparty');
 
 module.exports.upload = {
@@ -24,29 +24,22 @@ module.exports.upload = {
                 return reply(err);
             } else {
                 FileService.upload(files, function(responseImage) {
-                    if(FileService.isImage(responseImage.fileName)) {
-                        var image = new Image({
-                            name: responseImage.fileName,
-                            path: config.publicFolder + config.uploadFolder + "/" +responseImage.fileName
-                        });
-                        image.save(function(error, image) {
-                            if(!error) {
-                                reply({code: 200, message: 'Image uploaded successfully',
-                                    uploaded: 1,
-                                    url: 'http://'+config.server.host+':'+config.server.port + config.filesUrlPath + '1024px' + responseImage.fileName,
-                                    fileName: responseImage.fileName
-                                });
-                            } else {
-                                reply(Boom.badImplementation('Cannot save image'));
-                            }
-                        });
-                    } else {
-                        reply({code: 200, message: 'File uploaded successfully',
-                            uploaded: 1,
-                            url: 'http://'+config.server.host+':'+config.server.port + config.filesUrlPath + '1024px' + responseImage.fileName,
-                            fileName: responseImage.fileName
-                        });
-                    }
+                    var file = new File({
+                        name: responseImage.fileName,
+                        path: config.publicFolder + config.uploadFolder + "/" +responseImage.fileName,
+                        type: FileService.isImage(responseImage.fileName) ? 'image' : 'file'
+                    });
+                    file.save(function(error, image) {
+                        if(!error) {
+                            reply({code: 200, message: 'File uploaded successfully',
+                                uploaded: 1,
+                                url: 'http://'+config.server.host+':'+config.server.port + config.filesUrlPath + '1024px' + responseImage.fileName,
+                                fileName: responseImage.fileName
+                            });
+                        } else {
+                            reply(Boom.badImplementation('Cannot save image'));
+                        }
+                    });
                 });
             }
         });
@@ -111,10 +104,13 @@ module.exports.getAllImages = {
             offset: Joi.number()
         }
     },
-    auth: false,
+    auth: {
+        strategy: 'token',
+        scope: ['user', 'admin']
+    },
     handler: function(request, reply) {
-        var query = { };
-        Image.find(query, 'name',
+        var query = { type: 'image' };
+        File.find(query, 'name type',
             {
                 skip: !_.isUndefined(request.payload.offset) ? request.payload.offset : 0,
                 limit: !_.isUndefined(request.payload.limit) ? request.payload.limit : 12,
