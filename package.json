@@ -22,7 +22,7 @@
   "dependencies": {
     "bcrypt": "~0.8.*",
     "boom": "~2.*",
-    "hapi": "~8.*",
+    "hapi": "~9.*",
     "hapi-auth-jwt": "~2.*",
     "imagemagick": "^0.1.3",
     "inert": "^3.2.0",
@@ -33,7 +33,8 @@
     "mongoose": "~4.*",
     "mongoose-softdelete": "~0.6.*",
     "multiparty": "^4.1.2",
-    "walk": "^2.3.9"
+    "walk": "^2.3.9",
+    "lodash": "^3.0"
   },
   "devDependencies": {
     "gulp": "~3.*",
