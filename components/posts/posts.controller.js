@@ -76,7 +76,8 @@ module.exports.create = {
             image: Joi.any(),
             icon: Joi.string(),
             shortText: Joi.string(),
-            display: Joi.boolean().default(config.defaultValues.display)
+            display: Joi.boolean().default(config.defaultValues.display),
+            tags: Joi.array().default([]).items(Joi.string())
         }
     },
     auth: {
@@ -141,7 +142,8 @@ module.exports.update = {
             image: Joi.any(),
             icon: Joi.string(),
             shortText: Joi.string(),
-            display: Joi.boolean().default(config.defaultValues.display)
+            display: Joi.boolean().default(config.defaultValues.display),
+            tags: Joi.array().default([]).items(Joi.string())
         }
     },
     auth: {
