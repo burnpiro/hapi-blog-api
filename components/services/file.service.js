@@ -20,7 +20,7 @@ fileService.upload = function(files, response) {
         var newPath = fileService.slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename);
         fs.writeFile(config.MixInsideFolder + newPath, data, function(err) {
             if (err) {
-                return reply(err);
+                return console.log(err);
             } else {
                 im.resize({
                     srcPath: config.MixInsideFolder + newPath,
