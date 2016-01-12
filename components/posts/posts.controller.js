@@ -119,7 +119,7 @@ module.exports.getOne = {
         .exec(function(error, post) {
             if(!error) {
                 if(_.isNull(post)) {
-                    reply(Boom.notFound('Cannot find post with that ID'));
+                    return reply(Boom.notFound('Cannot find post with that ID'));
                 }
                 reply({
                     code: 200,
