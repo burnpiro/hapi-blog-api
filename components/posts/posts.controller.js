@@ -50,18 +50,55 @@ module.exports.search = {
                 limit: !_.isUndefined(request.payload.limit) ? request.payload.limit : 12,
                 sort: {createdAt: -1}
             }, function(error, posts) {
-            if(!error) {
-                if(_.isNull(posts)) {
-                    reply(Boom.notFound('There is no posts added yet'));
+                if(!error) {
+                    if(_.isNull(posts)) {
+                        reply(Boom.notFound('There is no posts added yet'));
+                    }
+                    reply({
+                        code: 200,
+                        data: posts
+                    });
+                } else {
+                    reply(Boom.badImplementation(error));
                 }
-                reply({
-                    code: 200,
-                    data: posts
-                });
-            } else {
-                reply(Boom.badImplementation(error));
-            }
-        });
+            });
+    }
+};
+
+module.exports.getRelated = {
+    validate: {
+        payload: {
+            _category: Joi.string(),
+            limit: Joi.number(),
+            offset: Joi.number(),
+            post: Joi.string()
+        }
+    },
+    auth: false,
+    handler: function(request, reply) {
+        var query = { display: true };
+        if(!_.isUndefined(request.payload._category)) {
+            query._category = request.payload._category;
+        }
+        query.deletedAt = null;
+        Post.find(query, null,
+            {
+                skip: !_.isUndefined(request.payload.offset) ? request.payload.offset : 0,
+                limit: !_.isUndefined(request.payload.limit) ? request.payload.limit : 4,
+                sort: {createdAt: -1}
+            }, function(error, posts) {
+                if(!error) {
+                    if(_.isNull(posts)) {
+                        reply(Boom.notFound('There is no posts added yet'));
+                    }
+                    reply({
+                        code: 200,
+                        data: posts
+                    });
+                } else {
+                    reply(Boom.badImplementation(error));
+                }
+            });
     }
 };
 
