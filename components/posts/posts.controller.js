@@ -4,6 +4,7 @@ var Boom = require('boom');
 var Category = require('../categories/category.model');
 var Post = require('./post.model');
 var config = require('../../config');
+var natural = require('natural');
 
 module.exports.getAll = {
     auth: false,
@@ -81,20 +82,44 @@ module.exports.getRelated = {
             query._category = request.payload._category;
         }
         query.deletedAt = null;
-        Post.find(query, null,
+        Post.findOne(query, null,
             {
-                skip: !_.isUndefined(request.payload.offset) ? request.payload.offset : 0,
-                limit: !_.isUndefined(request.payload.limit) ? request.payload.limit : 4,
-                sort: {createdAt: -1}
-            }, function(error, posts) {
+                _id: request.payload.post
+            }, function(error, selectedPost) {
                 if(!error) {
-                    if(_.isNull(posts)) {
-                        reply(Boom.notFound('There is no posts added yet'));
+                    if(_.isNull(selectedPost)) {
+                        reply(Boom.notFound('There is no post'));
                     }
-                    reply({
-                        code: 200,
-                        data: posts
-                    });
+
+                    Post.find(query, null,
+                        {
+                            skip: !_.isUndefined(request.payload.offset) ? request.payload.offset : 0,
+                            limit: !_.isUndefined(request.payload.limit) ? request.payload.limit : 12,
+                            sort: {createdAt: -1}
+                        }, function(error, posts) {
+                            if(!error) {
+                                if(_.isNull(posts)) {
+                                    return reply(Boom.notFound('There is no posts added yet'));
+                                }
+                                var TfIdf = natural.TfIdf,
+                                    tfidf = new TfIdf();
+
+                                _.forEach(posts, function(post) {
+                                    if(!_.isEmpty(post.tags)) {
+                                        tfidf.addDocument(post.tags, post._id);
+                                    }
+                                });
+                                tfidf.tfidfs(selectedPost.tags, function(i, measure) {
+                                    console.log(i, measure);
+                                });
+                                reply({
+                                    code: 200,
+                                    data: posts
+                                });
+                            } else {
+                                reply(Boom.badImplementation(error));
+                            }
+                        });
                 } else {
                     reply(Boom.badImplementation(error));
                 }

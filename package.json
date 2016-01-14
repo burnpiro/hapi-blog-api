@@ -28,13 +28,13 @@
     "inert": "^3.2.0",
     "joi": "~6.*",
     "jsonwebtoken": "~5.*",
-    "lodash": "~3.*",
+    "lodash": "^3.0",
     "moment": "~2.*",
     "mongoose": "~4.*",
     "mongoose-softdelete": "~0.6.*",
     "multiparty": "^4.1.2",
-    "walk": "^2.3.9",
-    "lodash": "^3.0"
+    "natural": "^0.2.1",
+    "walk": "^2.3.9"
   },
   "devDependencies": {
     "gulp": "~3.*",
