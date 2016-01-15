@@ -9,7 +9,7 @@ module.exports.getAll = {
         scope: ['user', 'admin']
     },
     handler: function(request, reply) {
-        Tag.find({}, 'name', function(error, tags) {
+        Tag.find({}, function(error, tags) {
             if(!error) {
                 if(_.isNull(tags)) {
                     reply(Boom.notFound('There is no tags added yet'));
@@ -37,6 +37,7 @@ module.exports.create = {
     },
     handler: function(request, reply) {
         var tag = new Tag(request.payload);
+        console.log(request.payload);
         tag.save(function(error, tag) {
             if(!error) {
                 reply({message: 'Tag created successfully', data: tag});
@@ -66,7 +67,7 @@ module.exports.search = {
         if(!_.isUndefined(request.payload.name)) {
             request.payload.name = new RegExp(''+request.payload.name+'', "i");
         }
-        Tag.find(request.payload, 'name', function(error, tags) {
+        Tag.find(request.payload, function(error, tags) {
             if(!error) {
                 if(_.isNull(tags)) {
                     reply(Boom.notFound('There is no tags added yet'));

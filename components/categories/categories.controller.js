@@ -25,7 +25,6 @@ module.exports.getAll = {
 module.exports.create = {
     validate: {
         payload: {
-            _id: Joi.string().required(),
             parent: Joi.any().default(''),
             path: Joi.any(),
             name: Joi.string().required(),

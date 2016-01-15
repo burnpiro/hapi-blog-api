@@ -78,6 +78,11 @@ module.exports.getRelated = {
     auth: false,
     handler: function(request, reply) {
         var query = { display: true };
+        var limit = !_.isUndefined(request.payload.limit) ? request.payload.limit : 4;
+        var relatedPosts = [];
+        var TfIdf = natural.TfIdf,
+            tfidf = new TfIdf();
+
         if(!_.isUndefined(request.payload._category)) {
             query._category = request.payload._category;
         }
@@ -91,30 +96,40 @@ module.exports.getRelated = {
                         reply(Boom.notFound('There is no post'));
                     }
 
-                    Post.find(query, null,
+                    Post.find({
+                            _id: {$ne : selectedPost._id},
+                            deletedAt: null
+                        }, '_id image name tags',
                         {
-                            skip: !_.isUndefined(request.payload.offset) ? request.payload.offset : 0,
-                            limit: !_.isUndefined(request.payload.limit) ? request.payload.limit : 12,
                             sort: {createdAt: -1}
                         }, function(error, posts) {
                             if(!error) {
                                 if(_.isNull(posts)) {
                                     return reply(Boom.notFound('There is no posts added yet'));
                                 }
-                                var TfIdf = natural.TfIdf,
-                                    tfidf = new TfIdf();
 
                                 _.forEach(posts, function(post) {
-                                    if(!_.isEmpty(post.tags)) {
+                                    if(!_.isEmpty(post.tags) && post._id !== selectedPost._id) {
                                         tfidf.addDocument(post.tags, post._id);
+                                        console.log(post._id, post.tags);
                                     }
                                 });
+
+                                var sort = [];
                                 tfidf.tfidfs(selectedPost.tags, function(i, measure) {
-                                    console.log(i, measure);
+                                    sort.push({id:i, weight:measure});
                                 });
+                                sort = _.orderBy(sort, ['weight', 'id'], ['desc', 'asc']);
+
+                                _.forEach(posts, function(post, index) {
+                                    if(index < limit) {
+                                        relatedPosts.push(posts[sort[index].id]);
+                                    }
+                                });
+
                                 reply({
                                     code: 200,
-                                    data: posts
+                                    data: relatedPosts
                                 });
                             } else {
                                 reply(Boom.badImplementation(error));
