@@ -5,6 +5,7 @@ var Category = require('../categories/category.model');
 var Post = require('./post.model');
 var config = require('../../config');
 var natural = require('natural');
+var slug = require('slug');
 
 module.exports.getAll = {
     auth: false,
@@ -98,6 +99,7 @@ module.exports.getRelated = {
 
                     Post.find({
                             _id: {$ne : selectedPost._id},
+                            tags: { $exists: true, $ne: [] },
                             deletedAt: null
                         }, '_id image name tags',
                         {
@@ -111,7 +113,6 @@ module.exports.getRelated = {
                                 _.forEach(posts, function(post) {
                                     if(!_.isEmpty(post.tags) && post._id !== selectedPost._id) {
                                         tfidf.addDocument(post.tags, post._id);
-                                        console.log(post._id, post.tags);
                                     }
                                 });
 
@@ -121,6 +122,12 @@ module.exports.getRelated = {
                                 });
                                 sort = _.orderBy(sort, ['weight', 'id'], ['desc', 'asc']);
 
+                                if(_.isEmpty(sort)) {
+                                    return reply({
+                                        code: 200,
+                                        data: relatedPosts
+                                    });
+                                }
                                 _.forEach(posts, function(post, index) {
                                     if(index < limit) {
                                         relatedPosts.push(posts[sort[index].id]);
@@ -168,6 +175,7 @@ module.exports.create = {
             if(error || _.isNull(category)) {
                 reply(Boom.notFound('Cannot find category'));
             } else {
+                request.payload._id = slug(request.payload.name, {lower: true});
                 var post = new Post(request.payload);
                 post.save(function (error, category) {
                     if (!error) {
@@ -190,7 +198,8 @@ module.exports.getOne = {
     auth: false,
     handler: function(request, reply) {
         Post.findOne({
-            _id: request.params.postId, deletedAt: null
+            _id: request.params.postId,
+            deletedAt: null
         })
         .populate('_category', '_id name')
         .exec(function(error, post) {
@@ -206,6 +215,30 @@ module.exports.getOne = {
                 reply(Boom.notFound('Cannot find post with that ID'));
             }
         });
+    }
+};
+
+module.exports.getOneById = {
+    auth: false,
+    handler: function(request, reply) {
+        Post.findOne({
+            _id: request.params.postId,
+            deletedAt: null
+        })
+            .populate('_category', '_id name')
+            .exec(function(error, post) {
+                if(!error) {
+                    if(_.isNull(post)) {
+                        return reply(Boom.notFound('Cannot find post with that ID'));
+                    }
+                    reply({
+                        code: 200,
+                        data: post
+                    });
+                } else {
+                    reply(Boom.notFound('Cannot find post with that ID'));
+                }
+            });
     }
 };
 

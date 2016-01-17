@@ -3,7 +3,7 @@ module.exports = {
         name: 'Hapi Blog API'
     },
     server: {
-        host: '192.168.1.3',
+        host: '192.168.1.4',
         port: 8080
     },
     database: {
@@ -34,4 +34,10 @@ module.exports = {
         author: 'Kemal Erdem',
         display: true
     }
+};
+
+// trick to allow convert sting into mongoose ObjectId
+String.prototype.toObjectId = function() {
+    var ObjectId = (require('mongoose').Types.ObjectId);
+    return new ObjectId(this.toString());
 };

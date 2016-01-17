@@ -4,7 +4,7 @@ var Category   = require('../categories/category.model');
 var slug       = require('slug');
 
 var postSchema = new Schema({
-    _id           : { type: String, trim: true },
+    _id           : { type: String, trim: true, unique: true },
     _category     : { type: String, required: true, trim: true, ref: 'Category' },
     name          : { type: String, required: true, trim: true },
     icon          : { type: String, required: false, trim: true },
