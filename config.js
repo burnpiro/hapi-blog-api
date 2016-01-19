@@ -3,13 +3,13 @@ module.exports = {
         name: 'Hapi Blog API'
     },
     server: {
-        host: '192.168.1.3',
+        host: '192.168.56.37',
         port: 8080
     },
     database: {
         host: '127.0.0.1',
         port: 27017,
-        db: 'blog',
+        db: 'blog2',
         username: '',
         password: ''
     },
