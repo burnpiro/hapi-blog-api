@@ -37,7 +37,6 @@ module.exports.create = {
     },
     handler: function(request, reply) {
         var tag = new Tag(request.payload);
-        console.log(request.payload);
         tag.save(function(error, tag) {
             if(!error) {
                 reply({message: 'Tag created successfully', data: tag});
