@@ -100,7 +100,8 @@ module.exports.getRelated = {
                     Post.find({
                             _id: {$ne : selectedPost._id},
                             tags: { $exists: true, $ne: [] },
-                            deletedAt: null
+                            deletedAt: null,
+                            display: true
                         }, '_id image name tags',
                         {
                             sort: {createdAt: -1}
