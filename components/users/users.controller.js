@@ -66,7 +66,7 @@ module.exports.login = {
             userName: request.payload.userName,
             deleted: {$ne: true}
         }, function(error, user) {
-            if(error || _.isNull(user)) {
+            if(error || _.isEmpty(user) || user == null) {
                 reply(Boom.notFound('User with that userName do not exists'));
             }
 
