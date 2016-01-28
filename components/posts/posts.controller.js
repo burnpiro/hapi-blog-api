@@ -88,10 +88,8 @@ module.exports.getRelated = {
             query._category = request.payload._category;
         }
         query.deletedAt = null;
-        Post.findOne(query, null,
-            {
-                _id: request.payload.post
-            }, function(error, selectedPost) {
+        query._id = request.payload.post;
+        Post.findOne(query, null, function(error, selectedPost) {
                 if(!error) {
                     if(_.isNull(selectedPost)) {
                         reply(Boom.notFound('There is no post'));
