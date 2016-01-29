@@ -14,6 +14,7 @@ var postSchema = new Schema({
     content       : { type: String, required: true },
     display       : { type: Boolean, required: true, default: true },
     createdAt     : { type: Date, default: Date.now },
+    publishedAt   : { type: Date, default: Date.now },
     deletedAt     : { type: Date, default: null },
     tags          : [{ type: String}]
 });

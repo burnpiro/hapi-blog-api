@@ -45,6 +45,7 @@ module.exports.search = {
         if(!_.isUndefined(request.payload.name)) {
             query.name = request.payload.name;
         }
+        query.publishedAt = { $gte : new ISODate('now') };
         query.deletedAt = null;
         Post.find(query, null,
             {
@@ -87,6 +88,7 @@ module.exports.getRelated = {
         if(!_.isUndefined(request.payload._category)) {
             query._category = request.payload._category;
         }
+        query.publishedAt = { $gte : new ISODate('now') };
         query.deletedAt = null;
         query._id = request.payload.post;
         Post.findOne(query, null, function(error, selectedPost) {
@@ -160,6 +162,7 @@ module.exports.create = {
             icon: Joi.string(),
             shortText: Joi.string(),
             display: Joi.boolean().default(config.defaultValues.display),
+            publishedAt: Joi.string(),
             tags: Joi.array().default([]).items(Joi.string())
         }
     },
@@ -175,10 +178,14 @@ module.exports.create = {
                 reply(Boom.notFound('Cannot find category'));
             } else {
                 request.payload._id = slug(request.payload.name, {lower: true});
+                if(!_.isUndefined(request.payload.publishedAt)) {
+                    request.payload.publishedAt = new Date(request.payload.publishedAt);
+                }
                 var post = new Post(request.payload);
                 post.save(function (error, category) {
                     if (!error) {
-                        reply({message: 'Post updated successful', data: post, code: 200});
+                        console.log(post);
+                        reply({message: 'Post created successful', data: post, code: 200});
                     } else {
                         if (11000 === error.code || 11001 === error.code) {
                             reply(Boom.forbidden('category id already taken'));
@@ -252,6 +259,7 @@ module.exports.update = {
             icon: Joi.string(),
             shortText: Joi.string(),
             display: Joi.boolean().default(config.defaultValues.display),
+            publishedAt: Joi.string(),
             tags: Joi.array().default([]).items(Joi.string())
         }
     },
@@ -260,10 +268,14 @@ module.exports.update = {
         scope: ['user', 'admin']
     },
     handler: function(request, reply) {
+        if(!_.isUndefined(request.payload.publishedAt)) {
+            request.payload.publishedAt = new Date(request.payload.publishedAt);
+        }
         Post.update({
             _id: request.params.postId, deletedAt: null
         }, request.payload, function(error, post) {
             if (!error) {
+                console.log(post);
                 reply({message: 'Post updated successful', data: post, code: 200});
             } else {
                 if (11000 === error.code || 11001 === error.code) {
