@@ -17,7 +17,7 @@ var fileService = {
 fileService.upload = function(files, response) {
     fs.readFile(files.file[0].path, function(err, data) {
         fileService.checkFileExist();
-        var newPath = fileService.slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename);
+        var newPath = fileService.slug(moment().format('X')+files.file[0].originalFilename);
         fs.writeFile(config.MixInsideFolder + newPath, data, function(err) {
             if (err) {
                 return console.log(err);
@@ -59,8 +59,8 @@ fileService.upload = function(files, response) {
                     }
                 });
                 return response({
-                    fileName: fileService.slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename),
-                    isImage: fileService.isImage(fileService.slug(moment().format('YYYY-MM-DD')+files.file[0].originalFilename))
+                    fileName: fileService.slug(moment().format('X')+files.file[0].originalFilename),
+                    isImage: fileService.isImage(fileService.slug(moment().format('X')+files.file[0].originalFilename))
                 });
             }
         });
