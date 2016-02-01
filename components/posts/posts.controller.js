@@ -45,7 +45,7 @@ module.exports.search = {
         if(!_.isUndefined(request.payload.name)) {
             query.name = request.payload.name;
         }
-        query.publishedAt = { $gte : new ISODate('now') };
+        query.publishedAt = { $lt : Date('now') };
         query.deletedAt = null;
         Post.find(query, null,
             {
@@ -88,7 +88,7 @@ module.exports.getRelated = {
         if(!_.isUndefined(request.payload._category)) {
             query._category = request.payload._category;
         }
-        query.publishedAt = { $gte : new ISODate('now') };
+        query.publishedAt = { $lt : Date('now') };
         query.deletedAt = null;
         query._id = request.payload.post;
         Post.findOne(query, null, function(error, selectedPost) {
