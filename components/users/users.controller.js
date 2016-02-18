@@ -70,7 +70,7 @@ module.exports.login = {
                 reply(Boom.notFound('User with that userName do not exists'));
             }
 
-            user.comparePasswords(request.payload.password, function(error, isMatch) {
+            user.comparePasswords(request.payload.password, user.password, function(error, isMatch) {
                 if(error) {
                     reply(Boom.badImplementation('Unknown error has occurred'));
                 }
