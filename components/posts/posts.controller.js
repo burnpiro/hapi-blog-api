@@ -8,7 +8,10 @@ var natural = require('natural');
 var slug = require('slug');
 
 module.exports.getAll = {
-    auth: false,
+    auth: {
+        strategy: 'token',
+        scope: ['user', 'admin']
+    },
     handler: function(request, reply) {
         Post.find({deletedAt: null}, null, {sort: {createdAt: -1}},  function(error, posts) {
             if(!error) {
@@ -101,7 +104,8 @@ module.exports.getRelated = {
                             _id: {$ne : selectedPost._id},
                             tags: { $exists: true, $ne: [] },
                             deletedAt: null,
-                            display: true
+                            display: true,
+                            publishedAt: { $lt : Date('now') }
                         }, '_id image name tags',
                         {
                             sort: {createdAt: -1}
